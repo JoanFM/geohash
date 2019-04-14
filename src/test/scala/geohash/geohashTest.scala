@@ -41,6 +41,4 @@ class GeoHashTest extends FlatSpec {
       assert(final_solutions{2}.geohash       == "sp3e2wuzpnhr")
       assert(final_solutions{2}.unique_prefix == "sp3e2wuz")
     }
-
-
 }

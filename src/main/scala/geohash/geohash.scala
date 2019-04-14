@@ -77,8 +77,8 @@ object GeoHashApp extends App {
 
     if (args.length < 1) {
         println("Not enough params: A csv file must be given in input")
-    } 
-    val filename = args(0)
-
-	application(filename)
+    } else {
+    	val filename = args(0)
+		application(filename)
+	}
 }
