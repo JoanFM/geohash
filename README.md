@@ -7,7 +7,7 @@
     The project is built using sbt, and it has one dependency with com.rklaehn.radixtree library (https://index.scala-lang.org/rklaehn/radixtree/radixtree/0.5.0?target=_2.12)
 
     To run the application just use the command from the root of the directory: 
-        - sbt run "filename" 
+        - sbt "run filename" 
     where filename is the path of the input csv file containing the list of latitude, longitude coordinates to be geohashed. Invalid coordinates will be ignored in output and a Warning will be printed.
 
     To run the tests just use the command from the root of the directory:

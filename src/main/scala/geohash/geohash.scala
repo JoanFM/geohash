@@ -50,7 +50,6 @@ object GeoHashApp extends App {
 			finalSolutionRec(partial_solution.geohash.length, partial_solution.geohash)
 		}
 	}
-
 	/**
  	* Receive the input path of a file containing csv coordinates
  	*/
@@ -67,11 +66,11 @@ object GeoHashApp extends App {
 
     	val tree 			 	   = RadixTree(partial_solutions.map(x => x.geohash -> x.geohash): _*)
     	def final_solution_builder = finalSolution(tree)
-    	val final_solutions = partial_solutions.map(final_solution_builder)
     	println("lat,lng,geohash,uniq")
-    	for (solution <- final_solutions) {
+    	partial_solutions.map(x => {
+    		val solution = final_solution_builder(x)
     		println(solution)
-    	}
+    		})
 	    bufferedSource.close
     }
 
