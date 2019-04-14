@@ -1,4 +1,6 @@
 name := "solutions"
 version := "0.1"
 libraryDependencies += "com.rklaehn" %% "radixtree" % "0.5.0"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 scalaVersion := "2.12.8"

@@ -1,3 +1,5 @@
+package geohash
+
 import coordinates._
 import defs._
 import com.rklaehn.radixtree._
@@ -8,9 +10,17 @@ object GeoHashApp extends App {
  	* @param lat : defs.Latitude  : latitude coordinate
  	* @param long: defs.Longitude : longitude coordinate
  	*/
-	def partialSolution(lat: defs.Latitude, long: defs.Longitude): defs.PartialSolution = {
-		val coordinates	= new Coordinates(lat, long)
-		new defs.PartialSolution(lat, long, coordinates.GeoHash())
+	def partialSolution(lat: defs.Latitude, long: defs.Longitude): Option[defs.PartialSolution] = {
+		try {
+			val coordinates	= new Coordinates(lat, long)
+			Some(new defs.PartialSolution(lat, long, coordinates.GeoHash()))
+		} catch {
+			case except: IllegalArgumentException => {
+				println("WARNING => An invalid coordinate (" + lat + "," + long + ") was ommited")
+				//new defs.PartialSolution(lat, long, defs.invalid_identifier)
+			}
+			None
+		}
 	}
 
 	/**
@@ -25,7 +35,7 @@ object GeoHashApp extends App {
  		*/
 		(partial_solution: defs.PartialSolution) => {
  			@annotation.tailrec
-			def finalSolutionRec(pos: Int, alternative: defs.Unique_Identifier): defs.Solution = {
+			def finalSolutionRec(pos: Int, alternative: defs.Unique_Prefix): defs.Solution = {
 				if (pos <= 0) {
 					new defs.Solution(partial_solution.lat, partial_solution.long, partial_solution.geohash, alternative)
 				}
@@ -37,8 +47,7 @@ object GeoHashApp extends App {
 					finalSolutionRec(pos - 1, prefix_to_find)
 				}
 			}
-			val solution = finalSolutionRec(partial_solution.geohash.length, partial_solution.geohash)
-     		solution
+			finalSolutionRec(partial_solution.geohash.length, partial_solution.geohash)
 		}
 	}
 
@@ -46,14 +55,19 @@ object GeoHashApp extends App {
  	* Receive the input path of a file containing csv coordinates
  	*/
     def application(input_file_path: String) = {
-    	val bufferedSource = io.Source.fromFile(input_file_path)
-    	val partial_solutions = bufferedSource.getLines.drop(1).map(line => line.split(",").map(_.trim.toDouble) match {
-    		case Array(lat: Double, long: Double) => partialSolution(lat, long)
-    	})
-    	val tuple_arrays = partial_solutions.toArray.map(x => (x , x.geohash -> x.geohash)).unzip
-    	val tree = RadixTree(tuple_arrays._2: _*)
+    	
+    	val bufferedSource	  = io.Source.fromFile(input_file_path)
+    	val partial_solutions: List[defs.PartialSolution] = bufferedSource.getLines.drop(1).map(line => {
+    		line.split(",").map(_.trim.toDouble) match {
+    			case Array(lat: Double, long: Double) => { 
+    				partialSolution(lat, long)
+    			}
+    		}
+    	}).flatten.toList
+
+    	val tree 			 	   = RadixTree(partial_solutions.map(x => x.geohash -> x.geohash): _*)
     	def final_solution_builder = finalSolution(tree)
-    	val final_solutions = tuple_arrays._1.map(final_solution_builder)
+    	val final_solutions = partial_solutions.map(final_solution_builder)
     	println("lat,lng,geohash,uniq")
     	for (solution <- final_solutions) {
     		println(solution)
@@ -62,8 +76,8 @@ object GeoHashApp extends App {
     }
 
     if (args.length < 1) {
-        println("Not enough params")
-    }
+        println("Not enough params: A csv file must be given in input")
+    } 
     val filename = args(0)
 
 	application(filename)

@@ -16,6 +16,7 @@ class LimitsIterator {
  		* @param option: Boolean      : Wether or not the second half should be taken for the next limits
  		*/
 		def next(current: defs.Limits, option: Boolean): defs.Limits = {
+			if (current._1 > current._2) throw new IllegalArgumentException("Not valid limits"); 
 			val new_limits = if (option) new defs.Limits(current._1 + ((current._2 - current._1)/2.0), current._2) else new defs.Limits(current._1, current._2 - ((current._2 - current._1)/2.0)) 
 			new_limits
 		}
@@ -28,7 +29,7 @@ class LimitsIterator {
  	* @param position: Int   : Current position of the bit to obtain
  	* @param option: Boolean : Wether or not the second half should be taken for the next limits
  	* @param current_long: defs.Limits : Current limits corresponding to the longitude coordinate
- 	* @param current_lat : defs.Limits : Current limits corresponding to the latitude coordinate
+ 	* @param current_lat : defs.Limits : Current limits corresponding to the longitude coordinate
  	*/
 	def next(position: Int, option: Boolean, current_long: defs.Limits, current_lat: defs.Limits): defs.Limits = {
 		val new_limits = if (position % 2 == 0) inner_iterator.next(current_long, option) else inner_iterator.next(current_lat, option)

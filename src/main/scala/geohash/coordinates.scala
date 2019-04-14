@@ -3,6 +3,11 @@ import iterators._
 import defs._
 
 class Coordinates(val lat: defs.Latitude, val long: defs.Longitude) {
+
+	if (lat > defs.limitsLat._2 || lat < defs.limitsLat._1) throw new IllegalArgumentException("Not valid latitude value"); 
+	if (long > defs.limitsLon._2 || long < defs.limitsLon._1) throw new IllegalArgumentException("Not valid longitude value"); 
+
+
 	/**
  	* Converts the coordinates into a bit representation stored in a Long because it is 64-bit long, enough to fit the 60 bit - long
  	* encoding of the coordinates.
