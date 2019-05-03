@@ -1,6 +1,6 @@
 # README GeoHashApp
 
-    The GeoHashApp is the solution proposal for the problem stated in https://gist.github.com/joanvr/4d6f533e776b55830c59d78221372fbb
+    The GeoHashApp is the solution proposal to transform a set of latitude, longitude points to its geohash representation plus finding the shortest common prefix
 
 #Bulding and Running:
 
